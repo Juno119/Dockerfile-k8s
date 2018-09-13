@@ -35,8 +35,25 @@ docker tag jingjingxyk/dockerfile-k8s:kubernetes-ingress-controller quay.io/kube
 docker pull jingjingxyk/dockerfile-k8s:kubernetes-dashboard
 docker tag jingjingxyk/dockerfile-k8s:kubernetes-dashboard k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.0
 
+
+
+docker pull jingjingxyk/dockerfile-k8s:volume-nfs
+docker tag  jingjingxyk/dockerfile-k8s:volume-nfs gcr.io/google_containers/volume-nfs
+
+docker pull jingjingxyk/dockerfile-k8s:external-storage-cephfs
+docker tag  jingjingxyk/dockerfile-k8s:external-storage-cephfs quay.io/external_storage/cephfs-provisioner:latest
+
+docker pull jingjingxyk/dockerfile-k8s:external-storage-nfs
+docker tag  jingjingxyk/dockerfile-k8s:external-storage-nfs  quay.io/kubernetes_incubator/nfs-provisioner:latest
+
+
+
 #coredns 需要　network addons　 https://kubernetes.io/docs/concepts/cluster-administration/addons/
 #v1.11.1 以后　coredns　取代　kube-dns(可以不要了)
 
 
+#清理多余的镜像
 docker rmi $(docker images |grep 'jingjingxyk/dockerfile-k8s' |awk '{print $1":"$2}')
+docker rmi $(docker images |grep 'jingjingxyk/dockerfile-flannel' |awk '{print $1":"$2}')
+
+
