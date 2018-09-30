@@ -77,88 +77,41 @@ systemctl enable kubelet && systemctl start kubelet
 ### 准备kubernetes docker镜像   v1.11.2版本　
 >> 查询需要哪一些镜像，使用如下命令
 ```shell 
-kubeadm config images list  --kubernetes-version=1.11.2
+kubeadm config images list  --kubernetes-version=1.11.3
 ```
 ```shell 
 
-k8s.gcr.io/kube-apiserver-amd64:v1.11.2
-k8s.gcr.io/kube-controller-manager-amd64:v1.11.2
-k8s.gcr.io/kube-scheduler-amd64:v1.11.2
+k8s.gcr.io/kube-apiserver-amd64:v1.11.3
+k8s.gcr.io/kube-controller-manager-amd64:v1.11.3
+k8s.gcr.io/kube-scheduler-amd64:v1.11.3
 k8s.gcr.io/kube-proxy-amd64:v1.11.2
 k8s.gcr.io/pause:3.1
 k8s.gcr.io/etcd-amd64:3.2.18
-k8s.gcr.io/coredns:1.1.3
+k8s.gcr.io/coredns:1.2.2
 
 ```
 #### master　节点所需镜像　（在master节点上操作）
-```shell 
-docker pull jingjingxyk/dockerfile-k8s:etcd
-docker tag jingjingxyk/dockerfile-k8s:etcd k8s.gcr.io/etcd-amd64:3.2.18
+[ kuernetes master节点和slave 必需的容器](google_containers_docker_pull.md)
 
-docker pull jingjingxyk/dockerfile-k8s:kube-apiserver
-docker tag jingjingxyk/dockerfile-k8s:kube-apiserver k8s.gcr.io/kube-apiserver-amd64:v1.11.2
-
-docker pull jingjingxyk/dockerfile-k8s:kube-controller-manager
-docker tag jingjingxyk/dockerfile-k8s:kube-controller-manager k8s.gcr.io/kube-controller-manager-amd64:v1.11.2
-
-docker pull jingjingxyk/dockerfile-k8s:kube-proxy
-docker tag jingjingxyk/dockerfile-k8s:kube-proxy k8s.gcr.io/kube-proxy-amd64:v1.11.2
-
-docker pull jingjingxyk/dockerfile-k8s:kube-scheduler
-docker tag jingjingxyk/dockerfile-k8s:kube-scheduler k8s.gcr.io/kube-scheduler-amd64:v1.11.2
-
-docker pull jingjingxyk/dockerfile-k8s:pause
-docker tag jingjingxyk/dockerfile-k8s:pause k8s.gcr.io/pause:3.1
-
-docker pull jingjingxyk/dockerfile-k8s:coredns
-docker tag jingjingxyk/dockerfile-k8s:coredns k8s.gcr.io/coredns:1.1.3
-
-docker pull jingjingxyk/dockerfile-flannel:flannel
-docker tag jingjingxyk/dockerfile-flannel:flannel quay.io/coreos/flannel:v0.10.0-amd64
-
-docker pull jingjingxyk/dockerfile-k8s:kubernetes-dashboard
-docker tag jingjingxyk/dockerfile-k8s:kubernetes-dashboard k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.0
-
-
-
-#清理多余的镜像
-docker rmi $(docker images |grep 'jingjingxyk/dockerfile-k8s' |awk '{print $1":"$2}')
-docker rmi $(docker images |grep 'jingjingxyk/dockerfile-flannel' |awk '{print $1":"$2}')
-
-
-```
-
-#### slave节点所需docker镜像　(在节点上操作)
-```shell 
-docker pull jingjingxyk/dockerfile-k8s:kube-proxy
-docker tag jingjingxyk/dockerfile-k8s:kube-proxy k8s.gcr.io/kube-proxy-amd64:v1.11.2
-
-docker pull jingjingxyk/dockerfile-k8s:pause
-docker tag jingjingxyk/dockerfile-k8s:pause k8s.gcr.io/pause:3.1
-
-
-docker pull jingjingxyk/dockerfile-flannel:flannel
-docker tag jingjingxyk/dockerfile-flannel:flannel quay.io/coreos/flannel:v0.10.0-amd64
-
-
-#清理多余的镜像
-docker rmi $(docker images |grep 'jingjingxyk/dockerfile-k8s' |awk '{print $1":"$2}')
-docker rmi $(docker images |grep 'jingjingxyk/dockerfile-flannel' |awk '{print $1":"$2}')
-
-
-```
 
 #### master节点上　初始化kubernetes集群
->apiserver-advertise-address 根据实际情况指定ip地址
+[创建kubernetes集群参考](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
+> apiserver-advertise-address 根据实际情况指定ip地址
+> 多网卡需要指定使用网卡名称
+
+
 ```shell
-kubeadm init --kubernetes-version=1.11.2 --pod-network-cidr=10.244.0.0/16  --token-ttl 0  --apiserver-advertise-address=192.168.1.21
+
+kubeadm init --kubernetes-version=1.11.3 --pod-network-cidr=10.244.0.0/16  --token-ttl 0  --apiserver-advertise-address=192.168.1.21
+
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
- #slave　节点加入执行命令
- kubeadm join 192.168.1.21:6443 --token ad4q0l.j7aprpvfo0ejcbpr --discovery-token-ca-cert-hash sha256:b7762f563975c8852dd48d77c9f140598716696ea7e9af55d576bf7e56bf95ae
+#slave　节点加入执行命令
+kubeadm join 192.168.1.21:6443 --token ad4q0l.j7aprpvfo0ejcbpr --discovery-token-ca-cert-hash sha256:b7762f563975c8852dd48d77c9f140598716696ea7e9af55d576bf7e56bf95ae
+
 ```
-[创建kubernetes集群参考](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
+
 
 #### master节点上配置网络组件 flannel 
 ```shell 
@@ -179,16 +132,19 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Docume
 
 ## 如果已经忘记了加入节点的token 和签名执行如下操作
 ```shell 
+
     kubeamd token list
     openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | \
     openssl dgst -sha256 -hex | sed 's/^.* //'
+
 ```
 
-## master节点也能部署用户pod　执行一下命令
->默认master节点不能安装用户pod
+## master节点也能部署用户pod
+>默认master节点不能部署用户pod
 ```shell 
 
 kubectl taint nodes --all node-role.kubernetes.io/master-
+
 ```
 
 
