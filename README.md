@@ -90,7 +90,7 @@ k8s.gcr.io/etcd-amd64:3.2.18
 k8s.gcr.io/coredns:1.1.3
 
 ```
-#### master　节点所需镜像　（在master节点上操作）
+#### 节点所需镜像
 [ kuernetes master节点和slave 必需的容器](google_containers_docker_pull.md)
 
 
@@ -113,14 +113,17 @@ kubeadm join 192.168.1.21:6443 --token ad4q0l.j7aprpvfo0ejcbpr --discovery-token
 ```
 
 
-#### master节点上配置网络组件 flannel 
-```shell 
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
-```
+#### 节点上配置网络组件 flannel 
+[网络组件](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
+[pod网络组件参考](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network)
 >kube-dns 在k8s-v1.10 以后被coredns取代
 >可用的网路组件不止flannel　还有很多，查看地址
+```shell 
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
 
-[更多pod网络组件](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network)
+```
+
+
 
 #### slave节点上执行
 >>先准备必要的K8s镜像
