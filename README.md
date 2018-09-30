@@ -74,7 +74,7 @@ systemctl enable kubelet && systemctl start kubelet
 ```
 
 
-### 准备kubernetes docker镜像   v1.11.2版本　
+### 准备kubernetes docker镜像   v1.11.3版本　
 >> 查询需要哪一些镜像，使用如下命令
 ```shell 
 kubeadm config images list  --kubernetes-version=1.11.3

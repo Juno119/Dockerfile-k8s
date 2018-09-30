@@ -27,7 +27,7 @@ docker pull jingjingxyk/dockerfile-k8s:etcd
 docker tag jingjingxyk/dockerfile-k8s:etcd k8s.gcr.io/etcd-amd64:3.2.18
 
 docker pull jingjingxyk/dockerfile-k8s:coredns
-docker tag jingjingxyk/dockerfile-k8s:coredns k8s.gcr.io/coredns:1.2.2
+docker tag jingjingxyk/dockerfile-k8s:coredns k8s.gcr.io/coredns:1.1.3
 
 #coredns 需要　network addons　 https://kubernetes.io/docs/concepts/cluster-administration/addons/
 #v1.11.1 以后　coredns　取代　kube-dns(可以不要了)
